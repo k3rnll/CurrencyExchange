@@ -13,8 +13,8 @@ public class CurrencyController extends HttpServlet {
         response.setContentType("application/json;charset=UTF-8");
         PrintWriter out = response.getWriter();
         String uri = request.getRequestURI();
+        DBController db = new DBController();
         if(uri.endsWith("/currencies")) {
-            DBController db = new DBController();
             out.print(db.getCurrenciesSet().toString());
         }
         else {
@@ -22,9 +22,18 @@ public class CurrencyController extends HttpServlet {
             String code = parseCurrencyCode(input);
             if(Objects.isNull(code))
                 response.sendError(400);
-            else
-                out.print(code);
+            else {
+                Currency currency = db.getCurrency(code);
+                if(Objects.isNull(currency))
+                    response.sendError(404);
+                else
+                    out.print(db.getCurrency(code).toString());
+            }
         }
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+
     }
 
     private String parseCurrencyCode(String input){

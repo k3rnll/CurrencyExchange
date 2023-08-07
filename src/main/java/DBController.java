@@ -32,6 +32,29 @@ public class DBController {
         return currenciesSet;
     }
 
+    public Currency getCurrency(String currencyCode) {
+        Currency currency = null;
+        if(connectDB()){
+            try {
+                resultSet = statement.executeQuery(String.format("SELECT * FROM Currencies WHERE Code = '%s'", currencyCode));
+                if(resultSet.next()){
+                    currency = new Currency(
+                            resultSet.getInt("ID"),
+                            resultSet.getString("Code"),
+                            resultSet.getString("FullName"),
+                            resultSet.getString("Sign")
+                    );
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                closeDB();
+            }
+        }
+
+        return currency;
+    }
+
     private boolean closeDB() {
         try {
             connection.close();
