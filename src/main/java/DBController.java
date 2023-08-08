@@ -39,24 +39,23 @@ public class DBController {
         return exchangeRate;
     }
 
-    public Set<Currency> getCurrenciesSet(){
+    public Set<Currency> getCurrenciesSet() {
         Set<Currency> currenciesSet = new HashSet<>();
-        if(connectDB()){
+        String query = "SELECT * FROM Currencies";
+        ResultSet result = executeStatement(query);
+        if (Objects.nonNull(result)) {
             try {
-                resultSet = statement.executeQuery("SELECT * FROM Currencies");
-                while(resultSet.next()){
+                while (result.next()) {
                     Currency currency = new Currency(
-                            resultSet.getInt("ID"),
-                            resultSet.getString("Code"),
-                            resultSet.getString("FullName"),
-                            resultSet.getString("Sign")
+                            result.getInt("ID"),
+                            result.getString("Code"),
+                            result.getString("FullName"),
+                            result.getString("Sign")
                     );
                     currenciesSet.add(currency);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
-            } finally {
-                closeDB();
             }
         }
         return currenciesSet;
@@ -65,8 +64,7 @@ public class DBController {
     public Currency getCurrency(String currencyCode) {
         Currency currency = null;
         String query = String.format("SELECT * FROM Currencies WHERE Code = '%s'", currencyCode);
-        Connection connection = connectionPool.getConnection();
-        ResultSet result = executeStatement(connection, query);
+        ResultSet result = executeStatement(query);
         if (Objects.nonNull(result)) {
             try {
                 currency = new Currency(
@@ -81,8 +79,9 @@ public class DBController {
         return currency;
     }
 
-    private ResultSet executeStatement(Connection connection, String query) {
+    private ResultSet executeStatement(String query) {
         ResultSet resultSet = null;
+        Connection connection = connectionPool.getConnection();
         if (Objects.nonNull(connection)) {
             try {
                 Statement statement = connection.createStatement();
