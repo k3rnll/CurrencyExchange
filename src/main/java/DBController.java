@@ -9,6 +9,34 @@ public class DBController {
     private static String dbUrl = "jdbc:sqlite:\\CE_DB.db";
 
 
+    public ExchangeRate getExchangeRate(String baseCurrencyCode, String targetCurrencyCode){
+        ExchangeRate exchangeRate = null;
+        try {
+            Currency baseCurrency = getCurrency(baseCurrencyCode);
+            Currency targetCurrency = getCurrency(targetCurrencyCode);
+            connectDB();
+
+            resultSet = statement.executeQuery(String.format(
+                    "SELECT * FROM ExchangeRates WHERE " +
+                    "BaseCurrencyId IN (SELECT id FROM Currencies WHERE Code = '%s') " +
+                    "AND " +
+                    "TargetCurrencyId IN (SELECT id FROM Currencies WHERE Code = '%s')",
+                    baseCurrency.getCode(), targetCurrency.getCode()));
+            if(resultSet.next()) {
+                exchangeRate = new ExchangeRate(
+                        resultSet.getInt("id"),
+                        baseCurrency,
+                        targetCurrency,
+                        resultSet.getDouble("Rate"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeDB();
+        }
+        return exchangeRate;
+    }
+
     public Set<Currency> getCurrenciesSet(){
         Set<Currency> currenciesSet = new HashSet<>();
         if(connectDB()){
