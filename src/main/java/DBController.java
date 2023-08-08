@@ -64,28 +64,36 @@ public class DBController {
 
     public Currency getCurrency(String currencyCode) {
         Currency currency = null;
-        Connection conn = connectionPool.getConnection();
-        if (Objects.nonNull(conn)) {
+        String query = String.format("SELECT * FROM Currencies WHERE Code = '%s'", currencyCode);
+        Connection connection = connectionPool.getConnection();
+        ResultSet result = executeStatement(connection, query);
+        if (Objects.nonNull(result)) {
             try {
-                String query = String.format("SELECT * FROM Currencies WHERE Code = '%s'", currencyCode);
-                Statement st = conn.createStatement();
-                ResultSet res = st.executeQuery(query);
-                if (res.next()) {
-                    currency = new Currency(
-                            res.getInt("ID"),
-                            res.getString("Code"),
-                            res.getString("FullName"),
-                            res.getString("Sign")
-                    );
-                }
+                currency = new Currency(
+                        result.getInt("ID"),
+                        result.getString("Code"),
+                        result.getString("FullName"),
+                        result.getString("Sign"));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return currency;
+    }
+
+    private ResultSet executeStatement(Connection connection, String query) {
+        ResultSet resultSet = null;
+        if (Objects.nonNull(connection)) {
+            try {
+                Statement statement = connection.createStatement();
+                resultSet = statement.executeQuery(query);
             } catch (SQLException e) {
                 e.printStackTrace();
             } finally {
-                connectionPool.releaseConnection(conn);
+                connectionPool.releaseConnection(connection);
             }
-
         }
-        return currency;
+        return resultSet;
     }
 
     private boolean closeDB() {
