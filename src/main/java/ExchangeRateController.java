@@ -14,7 +14,7 @@ public class ExchangeRateController extends HttpServlet {
         String uri = request.getRequestURI();
         DBController db = new DBController();
         if(uri.endsWith("/exchangeRates")){
-            out.print("do smthng");
+            out.print(db.getExchangeRatesSet().toString());
         } else {
             String input = uri.substring(uri.indexOf("exchangeRate") + 12);
             String currenciesCodes = parseCurrenciesCodes(input);

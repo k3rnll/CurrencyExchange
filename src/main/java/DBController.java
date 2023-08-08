@@ -8,6 +8,27 @@ public class DBController {
     private final DBConnectionPool connectionPool = new DBConnectionPool(dbUrl);
 
 
+    public Set<ExchangeRate> getExchangeRatesSet() {
+        Set<ExchangeRate> exchangeRatesSet = new HashSet<>();
+        String query = "SELECT * FROM ExchangeRates";
+        ResultSet result = executeStatement(query);
+        if (Objects.nonNull(result)) {
+            try {
+                while (result.next()) {
+                    ExchangeRate exchangeRate = new ExchangeRate(
+                            result.getInt("ID"),
+                            getCurrency(result.getInt("BaseCurrencyId")),
+                            getCurrency(result.getInt("TargetCurrencyId")),
+                            result.getDouble("Rate"));
+                    exchangeRatesSet.add(exchangeRate);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return  exchangeRatesSet;
+    }
+
     public ExchangeRate getExchangeRate(String baseCurrencyCode, String targetCurrencyCode){
         ExchangeRate exchangeRate = null;
         String query = String.format(
@@ -55,9 +76,16 @@ public class DBController {
         return currenciesSet;
     }
 
+    public Currency getCurrency(int id) {
+        return getCurrencyByQuery(String.format("SELECT * FROM Currencies WHERE ID = '%d'", id));
+    }
+
     public Currency getCurrency(String currencyCode) {
+        return getCurrencyByQuery(String.format("SELECT * FROM Currencies WHERE Code = '%s'", currencyCode));
+    }
+
+    private Currency getCurrencyByQuery(String query) {
         Currency currency = null;
-        String query = String.format("SELECT * FROM Currencies WHERE Code = '%s'", currencyCode);
         ResultSet result = executeStatement(query);
         if (Objects.nonNull(result)) {
             try {
