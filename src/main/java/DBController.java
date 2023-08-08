@@ -7,29 +7,24 @@ public class DBController {
     private final String dbUrl = "jdbc:sqlite:\\CE_DB.db";
     private final DBConnectionPool connectionPool = new DBConnectionPool(dbUrl);
 
-
-    public Set<ExchangeRate> getExchangeRatesSet() {
+    public Set<ExchangeRate> getExchangeRatesSet() throws SQLException{
         Set<ExchangeRate> exchangeRatesSet = new HashSet<>();
         String query = "SELECT * FROM ExchangeRates";
         ResultSet result = executeStatement(query);
         if (Objects.nonNull(result)) {
-            try {
-                while (result.next()) {
-                    ExchangeRate exchangeRate = new ExchangeRate(
-                            result.getInt("ID"),
-                            getCurrency(result.getInt("BaseCurrencyId")),
-                            getCurrency(result.getInt("TargetCurrencyId")),
-                            result.getDouble("Rate"));
-                    exchangeRatesSet.add(exchangeRate);
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            while (result.next()) {
+                ExchangeRate exchangeRate = new ExchangeRate(
+                        result.getInt("ID"),
+                        getCurrency(result.getInt("BaseCurrencyId")),
+                        getCurrency(result.getInt("TargetCurrencyId")),
+                        result.getDouble("Rate"));
+                exchangeRatesSet.add(exchangeRate);
             }
         }
         return  exchangeRatesSet;
     }
 
-    public ExchangeRate getExchangeRate(String baseCurrencyCode, String targetCurrencyCode){
+    public ExchangeRate getExchangeRate(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
         ExchangeRate exchangeRate = null;
         String query = String.format(
                         "SELECT * FROM ExchangeRates WHERE " +
@@ -39,77 +34,63 @@ public class DBController {
                         baseCurrencyCode, targetCurrencyCode);
         ResultSet result = executeStatement(query);
         if (Objects.nonNull(result)) {
-            try {
-                if (result.next()) {
-                    exchangeRate = new ExchangeRate(
-                            result.getInt("ID"),
-                            getCurrency(baseCurrencyCode),
-                            getCurrency(targetCurrencyCode),
-                            result.getDouble("Rate"));
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            if (result.next()) {
+                exchangeRate = new ExchangeRate(
+                        result.getInt("ID"),
+                        getCurrency(baseCurrencyCode),
+                        getCurrency(targetCurrencyCode),
+                        result.getDouble("Rate"));
             }
         }
         return exchangeRate;
     }
 
-    public Set<Currency> getCurrenciesSet() {
+    public Set<Currency> getCurrenciesSet() throws SQLException {
         Set<Currency> currenciesSet = new HashSet<>();
         String query = "SELECT * FROM Currencies";
         ResultSet result = executeStatement(query);
         if (Objects.nonNull(result)) {
-            try {
-                while (result.next()) {
-                    Currency currency = new Currency(
-                            result.getInt("ID"),
-                            result.getString("Code"),
-                            result.getString("FullName"),
-                            result.getString("Sign")
-                    );
-                    currenciesSet.add(currency);
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            while (result.next()) {
+                Currency currency = new Currency(
+                        result.getInt("ID"),
+                        result.getString("Code"),
+                        result.getString("FullName"),
+                        result.getString("Sign")
+                );
+                currenciesSet.add(currency);
             }
         }
         return currenciesSet;
     }
 
-    public Currency getCurrency(int id) {
-        return getCurrencyByQuery(String.format("SELECT * FROM Currencies WHERE ID = '%d'", id));
+    public Currency getCurrency(int id) throws SQLException {
+        return getCurrencyByQuery(String.format("SELECT * FROM Currencies WHERE id = '%d'", id));
     }
 
-    public Currency getCurrency(String currencyCode) {
+    public Currency getCurrency(String currencyCode) throws SQLException {
         return getCurrencyByQuery(String.format("SELECT * FROM Currencies WHERE Code = '%s'", currencyCode));
     }
 
-    private Currency getCurrencyByQuery(String query) {
+    private Currency getCurrencyByQuery(String query) throws SQLException{
         Currency currency = null;
         ResultSet result = executeStatement(query);
         if (Objects.nonNull(result)) {
-            try {
-                currency = new Currency(
-                        result.getInt("ID"),
-                        result.getString("Code"),
-                        result.getString("FullName"),
-                        result.getString("Sign"));
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            currency = new Currency(
+                    result.getInt("ID"),
+                    result.getString("Code"),
+                    result.getString("FullName"),
+                    result.getString("Sign"));
         }
         return currency;
     }
 
-    private ResultSet executeStatement(String query) {
+    private ResultSet executeStatement(String query) throws SQLException {
         ResultSet resultSet = null;
         Connection connection = connectionPool.getConnection();
         if (Objects.nonNull(connection)) {
             try {
                 Statement statement = connection.createStatement();
                 resultSet = statement.executeQuery(query);
-            } catch (SQLException e) {
-                e.printStackTrace();
             } finally {
                 connectionPool.releaseConnection(connection);
             }

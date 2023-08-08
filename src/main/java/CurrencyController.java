@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.Objects;
 
 
@@ -15,7 +16,12 @@ public class CurrencyController extends HttpServlet {
         String uri = request.getRequestURI();
         DBController db = new DBController();
         if(uri.endsWith("/currencies")) {
-            out.print(db.getCurrenciesSet().toString());
+            try {
+                out.print(db.getCurrenciesSet().toString());
+            } catch (SQLException e) {
+                e.printStackTrace();
+                response.sendError(500);
+            }
         }
         else {
             String input = uri.substring(uri.indexOf("currency") + 8);
@@ -23,11 +29,16 @@ public class CurrencyController extends HttpServlet {
             if(Objects.isNull(code))
                 response.sendError(400);
             else {
-                Currency currency = db.getCurrency(code);
-                if(Objects.isNull(currency))
-                    response.sendError(404);
-                else
-                    out.print(db.getCurrency(code).toString());
+                try {
+                    Currency currency = db.getCurrency(code);
+                    if (Objects.isNull(currency))
+                        response.sendError(404);
+                    else
+                        out.print(db.getCurrency(code).toString());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    response.sendError(500);
+                }
             }
         }
     }
