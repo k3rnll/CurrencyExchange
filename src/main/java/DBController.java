@@ -1,8 +1,10 @@
 import java.sql.*;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class DBController {
+    private DBConnectionPool connectionPool = new DBConnectionPool(dbUrl);
     private Connection connection;
     private Statement statement;
     private ResultSet resultSet;
@@ -62,24 +64,27 @@ public class DBController {
 
     public Currency getCurrency(String currencyCode) {
         Currency currency = null;
-        if(connectDB()){
+        Connection conn = connectionPool.getConnection();
+        if (Objects.nonNull(conn)) {
             try {
-                resultSet = statement.executeQuery(String.format("SELECT * FROM Currencies WHERE Code = '%s'", currencyCode));
-                if(resultSet.next()){
+                String query = String.format("SELECT * FROM Currencies WHERE Code = '%s'", currencyCode);
+                Statement st = conn.createStatement();
+                ResultSet res = st.executeQuery(query);
+                if (res.next()) {
                     currency = new Currency(
-                            resultSet.getInt("ID"),
-                            resultSet.getString("Code"),
-                            resultSet.getString("FullName"),
-                            resultSet.getString("Sign")
+                            res.getInt("ID"),
+                            res.getString("Code"),
+                            res.getString("FullName"),
+                            res.getString("Sign")
                     );
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
             } finally {
-                closeDB();
+                connectionPool.releaseConnection(conn);
             }
-        }
 
+        }
         return currency;
     }
 
