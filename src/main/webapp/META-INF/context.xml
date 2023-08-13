@@ -1,0 +1,15 @@
+<Context>
+    <Resource
+        name="jdbc/CurrencyExchange"
+        auth="Container"
+        type="javax.sql.DataSource"
+        factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+        maxActive="3"
+        maxIdle="3"
+        maxWait="5000"
+        driverClassName="org.sqlite.JDBC"
+        username=""
+        password=""
+        url="jdbc:sqlite:\CE_DB.db"
+    />
+</Context>
