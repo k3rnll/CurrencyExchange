@@ -1,17 +1,17 @@
 public class ExchangeRate {
-    private final int id;
+    private final Integer id;
     private final Currency baseCurrency;
     private final Currency targetCurrency;
-    private double rate;
+    private Double rate;
 
-    public ExchangeRate(int id, Currency baseCurrency, Currency targetCurrency, double rate) {
+    public ExchangeRate(Integer id, Currency baseCurrency, Currency targetCurrency, double rate) {
         this.id = id;
         this.baseCurrency = baseCurrency;
         this.targetCurrency = targetCurrency;
         this.rate = rate;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -23,7 +23,7 @@ public class ExchangeRate {
         return targetCurrency;
     }
 
-    public double getRate() {
+    public Double getRate() {
         return rate;
     }
 

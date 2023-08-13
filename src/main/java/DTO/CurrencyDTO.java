@@ -44,14 +44,4 @@ public class CurrencyDTO {
     public void setSign(String sign) {
         this.sign = sign;
     }
-
-    @Override
-    public String toString() {
-        return "CurrencyDTO{" +
-                "id='" + id + '\'' +
-                ", code='" + code + '\'' +
-                ", fullName='" + fullName + '\'' +
-                ", sign='" + sign + '\'' +
-                '}';
-    }
 }
