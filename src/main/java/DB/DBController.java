@@ -2,15 +2,14 @@ package DB;
 
 import Model.Currency;
 import Model.ExchangeRate;
-
 import java.sql.*;
 import java.util.HashSet;
 import java.util.Set;
 
 public class DBController {
-    private final JDBCConnectionPool connectionPool = new JDBCConnectionPool();
+    private static final JDBCConnectionPool connectionPool = new JDBCConnectionPool();
 
-    public Set<ExchangeRate> getExchangeRatesSet() throws SQLException{
+    public Set<ExchangeRate> getExchangeRatesSet() throws SQLException {
         Set<ExchangeRate> exchangeRatesSet = new HashSet<>();
         String query = "SELECT * FROM ExchangeRates";
         try (Connection connection = connectionPool.getConnection();
@@ -60,8 +59,7 @@ public class DBController {
                         result.getInt("ID"),
                         result.getString("Code"),
                         result.getString("FullName"),
-                        result.getString("Sign")
-                );
+                        result.getString("Sign"));
                 currenciesSet.add(currency);
             }
             return currenciesSet;
@@ -76,7 +74,7 @@ public class DBController {
         return getCurrencyByQuery(String.format("SELECT * FROM Currencies WHERE Code = '%s'", currencyCode));
     }
 
-    private Currency getCurrencyByQuery(String query) throws SQLException{
+    private Currency getCurrencyByQuery(String query) throws SQLException {
         try (Connection connection = connectionPool.getConnection();
              Statement statement = connection.createStatement();
              ResultSet result = statement.executeQuery(query)) {
@@ -85,8 +83,7 @@ public class DBController {
                         result.getInt("ID"),
                         result.getString("Code"),
                         result.getString("FullName"),
-                        result.getString("Sign")
-                );
+                        result.getString("Sign"));
             }
             return null;
         }
