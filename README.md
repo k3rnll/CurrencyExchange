@@ -27,14 +27,14 @@ ExchangeRates - хранит различные виды отношений од
     - id целевой валюты в таблице Currencies
     - числовое отношение одной валюты к другой
 
-API endpoints:
+### API endpoints:
 
-/currencies
+#### /currencies
 
     - GET возвращает все записи из таблицы Currencies в виде JSON DTOs
     - ответы 200 или 500
 
-/currency/ABC
+#### /currency/ABC
 
     - ABC вводимый код валюты для поиска в БД
     - код должен быть из трех букв в верхнем регистре
@@ -44,12 +44,12 @@ API endpoints:
     - PUT в разработке
     - DELETE в разработке
 
-/exchangeRates
+#### /exchangeRates
 
     - GET возвращает все записи из таблицы ExchangeRates в виде JSON DTOs
     - ответы 200 или 500
 
-/exchangeRate/ABCXYZ
+#### /exchangeRate/ABCXYZ
     
     - ABC вводимый код базовой валюты расчета
     - XYZ вводимый код целевой валюты расчета
