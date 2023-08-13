@@ -1,3 +1,4 @@
+import org.json.JSONObject;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -6,6 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 @WebServlet({"/currencies", "/currency/*"})
@@ -17,7 +19,15 @@ public class CurrencyController extends HttpServlet {
         DBController db = new DBController();
         if(uri.endsWith("/currencies")) {
             try {
-                out.print(db.getCurrenciesSet().toString());
+                Mapper mapper = new Mapper();
+                String output =
+                        db.getCurrenciesSet()
+                        .stream()
+                        .map(mapper::toDTO)
+                        .map(JSONObject::new)
+                        .map(JSONObject::toString)
+                        .collect(Collectors.joining(","));
+                out.print(output);
             } catch (SQLException e) {
                 e.printStackTrace();
                 response.sendError(500);
