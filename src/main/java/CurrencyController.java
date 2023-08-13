@@ -1,3 +1,4 @@
+import org.json.JSONObject;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -12,19 +13,19 @@ public class CurrencyController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        String uri = request.getRequestURI();
-        DBController db = new DBController();
-        String input = uri.substring(uri.indexOf("currency") + 8);
-        String code = parseCurrencyCode(input);
-        if(Objects.isNull(code))
+        String currencyCode = getCodeFromInput(request.getPathInfo());
+        if(currencyCode.isEmpty()) {
             response.sendError(400);
-        else {
+        } else {
             try {
-                Currency currency = db.getCurrency(code);
-                if (Objects.isNull(currency))
+                DBController db = new DBController();
+                Mapper mapper = new Mapper();
+                Currency currency = db.getCurrency(currencyCode);
+                if (Objects.nonNull(currency)) {
+                    out.print(new JSONObject(mapper.toDTO(currency)));
+                } else {
                     response.sendError(404);
-                else
-                    out.print(db.getCurrency(code).toString());
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
                 response.sendError(500);
@@ -36,10 +37,9 @@ public class CurrencyController extends HttpServlet {
 
     }
 
-    private String parseCurrencyCode(String input){
-        if(input.matches("/[A-Z]{3}"))
+    private String getCodeFromInput(String input) {
+        if (Objects.nonNull(input) && input.matches("/[A-Z]{3}"))
             return input.substring(1);
-        else
-            return null;
+        return "";
     }
 }
