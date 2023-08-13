@@ -1,3 +1,5 @@
+package Model;
+
 public class ExchangeRate {
     private final Integer id;
     private final Currency baseCurrency;
@@ -33,7 +35,7 @@ public class ExchangeRate {
 
     @Override
     public String toString() {
-        return "ExchangeRate{" +
+        return "Model.ExchangeRate{" +
                 "id=" + id +
                 ", baseCurrency=" + baseCurrency +
                 ", targetCurrency=" + targetCurrency +

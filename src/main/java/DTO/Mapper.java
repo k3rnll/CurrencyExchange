@@ -1,5 +1,7 @@
-import DTO.CurrencyDTO;
-import DTO.ExchangeRateDTO;
+package DTO;
+
+import Model.Currency;
+import Model.ExchangeRate;
 
 public class Mapper {
     public CurrencyDTO toDTO(Currency currency) {

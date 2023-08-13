@@ -1,3 +1,8 @@
+package DB;
+
+import Model.Currency;
+import Model.ExchangeRate;
+
 import java.sql.*;
 import java.util.HashSet;
 import java.util.Set;

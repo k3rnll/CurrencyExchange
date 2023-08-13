@@ -1,3 +1,5 @@
+package Model;
+
 import java.util.Objects;
 
 public class Currency {
@@ -40,7 +42,7 @@ public class Currency {
 
     @Override
     public String toString() {
-        return "Currency{" +
+        return "Model.Currency{" +
                 "id=" + id +
                 ", code='" + code + '\'' +
                 ", fullName='" + fullName + '\'' +

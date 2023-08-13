@@ -1,3 +1,8 @@
+package Servlet;
+
+import DB.DBController;
+import DTO.Mapper;
+import Model.ExchangeRate;
 import org.json.JSONObject;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -8,21 +13,23 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.Objects;
 
-@WebServlet({"/currency/*"})
-public class CurrencyController extends HttpServlet {
+@WebServlet ({"/exchangeRate/*"})
+public class ExchangeRateController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        String currencyCode = getCodeFromInput(request.getPathInfo());
-        if(currencyCode.isEmpty()) {
+        String currencyCodes = getCodesFromInput(request.getPathInfo());
+        if(currencyCodes.isEmpty()) {
             response.sendError(400);
         } else {
             try {
                 DBController db = new DBController();
                 Mapper mapper = new Mapper();
-                Currency currency = db.getCurrency(currencyCode);
-                if (Objects.nonNull(currency)) {
-                    out.print(new JSONObject(mapper.toDTO(currency)));
+                ExchangeRate exchangeRate = db.getExchangeRate(
+                        currencyCodes.substring(0, 3),
+                        currencyCodes.substring(3));
+                if (Objects.nonNull(exchangeRate)) {
+                    out.print(new JSONObject(mapper.toDTO(exchangeRate)));
                 } else {
                     response.sendError(404);
                 }
@@ -33,12 +40,8 @@ public class CurrencyController extends HttpServlet {
         }
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-
-    }
-
-    private String getCodeFromInput(String input) {
-        if (Objects.nonNull(input) && input.matches("/[A-Z]{3}"))
+    private String getCodesFromInput(String input) {
+        if (Objects.nonNull(input) && input.matches("/[A-Z]{6}"))
             return input.substring(1);
         return "";
     }
