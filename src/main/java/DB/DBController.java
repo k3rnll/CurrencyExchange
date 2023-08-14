@@ -76,14 +76,14 @@ public class DBController {
     }
 
     public boolean putCurrency(CurrencyDAO currencyDAO) throws SQLException {
-        String query = String.format(
+        String update = String.format(
                 "INSERT INTO Currencies(Code, FullName, Sign) VALUES ('%s', '%s', '%s')",
                 currencyDAO.getCode(),
                 currencyDAO.getFullName(),
                 currencyDAO.getSign());
         try (Connection connection = connectionPool.getConnection();
              Statement statement = connection.createStatement()) {
-            statement.executeQuery(query);
+            statement.executeUpdate(update);
             return true;
         }
     }
