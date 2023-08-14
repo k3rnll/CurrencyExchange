@@ -1,5 +1,6 @@
 package DB;
 
+import DAO.CurrencyDAO;
 import Model.Currency;
 import Model.ExchangeRate;
 import java.sql.*;
@@ -72,6 +73,19 @@ public class DBController {
 
     public Currency getCurrency(String currencyCode) throws SQLException {
         return getCurrencyByQuery(String.format("SELECT * FROM Currencies WHERE Code = '%s'", currencyCode));
+    }
+
+    public boolean putCurrency(CurrencyDAO currencyDAO) throws SQLException {
+        String query = String.format(
+                "INSERT INTO Currencies(Code, FullName, Sign) VALUES ('%s', '%s', '%s')",
+                currencyDAO.getCode(),
+                currencyDAO.getFullName(),
+                currencyDAO.getSign());
+        try (Connection connection = connectionPool.getConnection();
+             Statement statement = connection.createStatement()) {
+            statement.executeQuery(query);
+            return true;
+        }
     }
 
     private Currency getCurrencyByQuery(String query) throws SQLException {
