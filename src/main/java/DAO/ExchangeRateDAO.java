@@ -1,11 +1,20 @@
 package DAO;
 
 public class ExchangeRateDAO {
+    private Integer id;
     private Integer baseCurrencyId;
     private Integer targetCurrencyId;
     private Double rate;
 
     public ExchangeRateDAO(Integer baseCurrencyId, Integer targetCurrencyId, Double rate) {
+        this.id = 0;
+        this.baseCurrencyId = baseCurrencyId;
+        this.targetCurrencyId = targetCurrencyId;
+        this.rate = rate;
+    }
+
+    public ExchangeRateDAO(Integer id, Integer baseCurrencyId, Integer targetCurrencyId, Double rate) {
+        this.id = id;
         this.baseCurrencyId = baseCurrencyId;
         this.targetCurrencyId = targetCurrencyId;
         this.rate = rate;
