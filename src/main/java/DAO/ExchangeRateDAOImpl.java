@@ -14,7 +14,7 @@ import java.util.List;
 
 public class ExchangeRateDAOImpl implements ExchangeRateDAO{
     @Override
-    public ExchangeRate get(int id) throws SQLException {
+    public ExchangeRate get(Long id) throws SQLException {
         String query = String.format(
                 "SELECT %s, %s, %s, %s FROM %s WHERE %s = %d",
                 DAOFields.ID.getTitle(),
@@ -29,8 +29,8 @@ public class ExchangeRateDAOImpl implements ExchangeRateDAO{
              ResultSet result = statement.executeQuery(query)) {
             if (result.next()) {
                 CurrencyDAO currencyDAO = new CurrencyDAOImpl();
-                Currency baseCurrency = currencyDAO.get(result.getInt(2));
-                Currency targetCurrency = currencyDAO.get(result.getInt(3));
+                Currency baseCurrency = currencyDAO.get(result.getLong(2));
+                Currency targetCurrency = currencyDAO.get(result.getLong(3));
                 return new ExchangeRate(
                         result.getLong(1),
                         baseCurrency,
@@ -69,8 +69,8 @@ public class ExchangeRateDAOImpl implements ExchangeRateDAO{
              ResultSet result = statement.executeQuery(query)) {
             if (result.next()) {
                 CurrencyDAO currencyDAO = new CurrencyDAOImpl();
-                Currency baseCurrency = currencyDAO.get(result.getInt(2));
-                Currency targetCurrency = currencyDAO.get(result.getInt(3));
+                Currency baseCurrency = currencyDAO.get(result.getLong(2));
+                Currency targetCurrency = currencyDAO.get(result.getLong(3));
                 return new ExchangeRate(
                         result.getLong(1),
                         baseCurrency,
@@ -96,8 +96,8 @@ public class ExchangeRateDAOImpl implements ExchangeRateDAO{
              ResultSet result = statement.executeQuery(query)) {
             while (result.next()) {
                 CurrencyDAO currencyDAO = new CurrencyDAOImpl();
-                Currency baseCurrency = currencyDAO.get(result.getInt(2));
-                Currency targetCurrency = currencyDAO.get(result.getInt(3));
+                Currency baseCurrency = currencyDAO.get(result.getLong(2));
+                Currency targetCurrency = currencyDAO.get(result.getLong(3));
                 exchangeRates.add(new ExchangeRate(
                                     result.getLong(1),
                                     baseCurrency,
@@ -109,8 +109,8 @@ public class ExchangeRateDAOImpl implements ExchangeRateDAO{
     }
 
     @Override
-    public int save(ExchangeRate exchangeRate) throws SQLException {
-        return 0;
+    public Long save(ExchangeRate exchangeRate) throws SQLException {
+        return 0L;
     }
 
     @Override
@@ -119,12 +119,12 @@ public class ExchangeRateDAOImpl implements ExchangeRateDAO{
     }
 
     @Override
-    public int update(ExchangeRate exchangeRate) throws SQLException {
-        return 0;
+    public Long update(ExchangeRate exchangeRate) throws SQLException {
+        return 0L;
     }
 
     @Override
-    public int delete(ExchangeRate exchangeRate) {
-        return 0;
+    public Long delete(ExchangeRate exchangeRate) {
+        return 0L;
     }
 }

@@ -11,7 +11,7 @@ import java.util.List;
 public class CurrencyDAOImpl implements CurrencyDAO {
 
     @Override
-    public Currency get(int id) throws SQLException {
+    public Currency get(Long id) throws SQLException {
         String query = String.format(
                 "SELECT %s, %s, %s, %s FROM %s WHERE %s = %d",
                 DAOFields.ID.getTitle(),
@@ -85,8 +85,8 @@ public class CurrencyDAOImpl implements CurrencyDAO {
     }
 
     @Override
-    public int save(Currency currency) throws SQLException {
-        return 0;
+    public Long save(Currency currency) throws SQLException {
+        return 0L;
     }
 
     @Override
@@ -107,12 +107,12 @@ public class CurrencyDAOImpl implements CurrencyDAO {
     }
 
     @Override
-    public int update(Currency currency) throws SQLException {
-        return 0;
+    public Long update(Currency currency) throws SQLException {
+        return 0L;
     }
 
     @Override
-    public int delete(Currency currency) {
-        return 0;
+    public Long delete(Currency currency) {
+        return 0L;
     }
 }
