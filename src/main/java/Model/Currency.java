@@ -3,19 +3,19 @@ package Model;
 import java.util.Objects;
 
 public class Currency {
-    private final Integer id;
+    private final Long id;
     private final String code;
     private String fullName;
     private String sign;
 
-    public Currency(Integer id, String code, String fullName, String sign) {
+    public Currency(Long id, String code, String fullName, String sign) {
         this.id = id;
         this.code = code;
         this.fullName = fullName;
         this.sign = sign;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 

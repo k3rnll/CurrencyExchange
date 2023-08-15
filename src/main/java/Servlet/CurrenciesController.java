@@ -4,6 +4,7 @@ import DAO.CurrencyDAO;
 import DAO.CurrencyDAOImpl;
 import DTO.Mapper;
 import Model.Currency;
+
 import org.json.JSONObject;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -15,13 +16,16 @@ import java.sql.SQLException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static javax.servlet.http.HttpServletResponse.*;
+
 @WebServlet("/currencies")
 public class CurrenciesController extends HttpServlet {
+    private static final CurrencyDAO currencyDAO = new CurrencyDAOImpl();
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
-            CurrencyDAO currencyDAO = new CurrencyDAOImpl();
             Mapper mapper = new Mapper();
             String output = currencyDAO.getAll()
                             .stream()
@@ -30,9 +34,10 @@ public class CurrenciesController extends HttpServlet {
                             .map(JSONObject::toString)
                             .collect(Collectors.joining(","));
             out.print(output);
+            out.flush();
         } catch (SQLException e) {
             e.printStackTrace();
-            response.sendError(500);
+            response.setStatus(SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -44,24 +49,26 @@ public class CurrenciesController extends HttpServlet {
                 Objects.nonNull(request.getParameter("name")) &&
                 Objects.nonNull(request.getParameter("sign"))) {
             try {
-                CurrencyDAO currencyDAO = new CurrencyDAOImpl();
-                Currency currency = new Currency(0,
+                Currency currency = new Currency(0L,
                         request.getParameter("code"),
                         request.getParameter("name"),
                         request.getParameter("sign"));
-                response.setStatus(201);
-                currencyDAO.insert(currency);
-                String output = new JSONObject(currencyDAO.get(currency.getCode())).toString();
+                Long id = currencyDAO.insert(currency);
+                response.setStatus(SC_CREATED);
+                Currency insertedCurrency = new Currency(id, currency.getCode(),
+                        currency.getFullName(), currency.getSign());
+                String output = new JSONObject(insertedCurrency).toString();
                 out.print(output);
+                out.flush();
             } catch (SQLException e) {
                 e.printStackTrace();
-                if(e.getErrorCode() == 19) // SQLITE_CONSTRAINT  19   /* Abort due to constraint violation */
-                    response.sendError(409);
+                if(e.getMessage().contains("CONSTRAINT_UNIQUE"))
+                    response.setStatus(SC_CONFLICT);
                 else
-                    response.sendError(500);
+                    response.setStatus(SC_INTERNAL_SERVER_ERROR);
             }
         } else {
-            response.sendError(400);
+            response.setStatus(SC_BAD_REQUEST);
         }
     }
 }

@@ -32,7 +32,7 @@ public class ExchangeRateDAOImpl implements ExchangeRateDAO{
                 Currency baseCurrency = currencyDAO.get(result.getInt(2));
                 Currency targetCurrency = currencyDAO.get(result.getInt(3));
                 return new ExchangeRate(
-                        result.getInt(1),
+                        result.getLong(1),
                         baseCurrency,
                         targetCurrency,
                         result.getDouble(4));
@@ -72,7 +72,7 @@ public class ExchangeRateDAOImpl implements ExchangeRateDAO{
                 Currency baseCurrency = currencyDAO.get(result.getInt(2));
                 Currency targetCurrency = currencyDAO.get(result.getInt(3));
                 return new ExchangeRate(
-                        result.getInt(1),
+                        result.getLong(1),
                         baseCurrency,
                         targetCurrency,
                         result.getDouble(4));
@@ -99,7 +99,7 @@ public class ExchangeRateDAOImpl implements ExchangeRateDAO{
                 Currency baseCurrency = currencyDAO.get(result.getInt(2));
                 Currency targetCurrency = currencyDAO.get(result.getInt(3));
                 exchangeRates.add(new ExchangeRate(
-                                    result.getInt(1),
+                                    result.getLong(1),
                                     baseCurrency,
                                     targetCurrency,
                                     result.getDouble(4)));
@@ -114,8 +114,8 @@ public class ExchangeRateDAOImpl implements ExchangeRateDAO{
     }
 
     @Override
-    public int insert(ExchangeRate exchangeRate) throws SQLException {
-        return 0;
+    public Long insert(ExchangeRate exchangeRate) throws SQLException {
+        return 0L;
     }
 
     @Override

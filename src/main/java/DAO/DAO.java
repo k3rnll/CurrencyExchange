@@ -10,7 +10,7 @@ public interface DAO<T> {
 
     int save(T t) throws SQLException;
 
-    int insert(T t) throws SQLException;
+    Long insert(T t) throws SQLException;
 
     int update(T t) throws SQLException;
 

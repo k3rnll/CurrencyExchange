@@ -1,19 +1,19 @@
 package Model;
 
 public class ExchangeRate {
-    private final Integer id;
+    private final Long id;
     private final Currency baseCurrency;
     private final Currency targetCurrency;
     private Double rate;
 
-    public ExchangeRate(Integer id, Currency baseCurrency, Currency targetCurrency, double rate) {
+    public ExchangeRate(Long id, Currency baseCurrency, Currency targetCurrency, double rate) {
         this.id = id;
         this.baseCurrency = baseCurrency;
         this.targetCurrency = targetCurrency;
         this.rate = rate;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 

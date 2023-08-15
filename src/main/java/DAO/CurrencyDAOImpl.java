@@ -26,7 +26,7 @@ public class CurrencyDAOImpl implements CurrencyDAO {
              ResultSet result = statement.executeQuery(query)) {
             if (result.next()) {
                 return new Currency(
-                        result.getInt(1),
+                        result.getLong(1),
                         result.getString(2),
                         result.getString(3),
                         result.getString(4));
@@ -51,7 +51,7 @@ public class CurrencyDAOImpl implements CurrencyDAO {
              ResultSet result = statement.executeQuery(query)) {
             if (result.next()) {
                 return new Currency(
-                        result.getInt(1),
+                        result.getLong(1),
                         result.getString(2),
                         result.getString(3),
                         result.getString(4));
@@ -75,7 +75,7 @@ public class CurrencyDAOImpl implements CurrencyDAO {
              ResultSet result = statement.executeQuery(query)) {
             while (result.next()) {
                 currencies.add(new Currency(
-                        result.getInt(1),
+                        result.getLong(1),
                         result.getString(2),
                         result.getString(3),
                         result.getString(4)));
@@ -90,8 +90,20 @@ public class CurrencyDAOImpl implements CurrencyDAO {
     }
 
     @Override
-    public int insert(Currency currency) throws SQLException {
-        return 0;
+    public Long insert(Currency currency) throws SQLException {
+        String query = String.format(
+                "INSERT INTO Currencies (Code, FullName, Sign) " +
+                        "VALUES ('%s', '%s', '%s')",
+                currency.getCode(),
+                currency.getFullName(),
+                currency.getSign());
+        try (Connection connection = JDBCConnectionPool.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            statement.executeUpdate();
+            ResultSet returnedKeys = statement.getGeneratedKeys();
+            returnedKeys.next();
+            return returnedKeys.getLong(1);
+        }
     }
 
     @Override
