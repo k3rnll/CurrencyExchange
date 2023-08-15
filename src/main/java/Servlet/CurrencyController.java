@@ -14,33 +14,33 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.Objects;
 
+import static javax.servlet.http.HttpServletResponse.*;
+
 @WebServlet("/currency/*")
 public class CurrencyController extends HttpServlet {
+    public static final CurrencyDAO currencyDAO = new CurrencyDAOImpl();
+    public static final Mapper mapper = new Mapper();
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
         PrintWriter out = response.getWriter();
         String currencyCode = getCodeFromInput(request.getPathInfo());
         if(currencyCode.isEmpty()) {
-            response.sendError(400);
+            response.setStatus(SC_BAD_REQUEST);
         } else {
             try {
-                Mapper mapper = new Mapper();
-                CurrencyDAO currencyDAO = new CurrencyDAOImpl();
                 Currency currency = currencyDAO.get(currencyCode);
                 if (Objects.nonNull(currency)) {
                     out.print(new JSONObject(mapper.toDTO(currency)));
+                    out.flush();
                 } else {
-                    response.sendError(404);
+                    response.setStatus(SC_NOT_FOUND);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
-                response.sendError(500);
+                response.setStatus(SC_INTERNAL_SERVER_ERROR);
             }
         }
-    }
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-
     }
 
     private String getCodeFromInput(String input) {

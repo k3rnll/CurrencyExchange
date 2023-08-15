@@ -1,6 +1,5 @@
 package DAO;
 
-import DB.DBTables;
 import DB.JDBCConnectionPool;
 import Model.Currency;
 
@@ -12,15 +11,7 @@ public class CurrencyDAOImpl implements CurrencyDAO {
 
     @Override
     public Currency get(Long id) throws SQLException {
-        String query = String.format(
-                "SELECT %s, %s, %s, %s FROM %s WHERE %s = %d",
-                DAOFields.ID.getTitle(),
-                DAOFields.CODE.getTitle(),
-                DAOFields.FULL_NAME.getTitle(),
-                DAOFields.SIGN.getTitle(),
-                DBTables.CURRENCIES.getTitle(),
-                DAOFields.ID.getTitle(),
-                id);
+        String query = String.format("SELECT Id, Code, FullName, Sign FROM Currencies WHERE Id = '%d'", id);
         try (Connection connection = JDBCConnectionPool.getConnection();
              Statement statement = connection.createStatement();
              ResultSet result = statement.executeQuery(query)) {
@@ -37,15 +28,7 @@ public class CurrencyDAOImpl implements CurrencyDAO {
 
     @Override
     public Currency get(String code) throws SQLException {
-        String query = String.format(
-                "SELECT %s, %s, %s, %s FROM %s WHERE %s = %s",
-                DAOFields.ID.getTitle(),
-                DAOFields.CODE.getTitle(),
-                DAOFields.FULL_NAME.getTitle(),
-                DAOFields.SIGN.getTitle(),
-                DBTables.CURRENCIES.getTitle(),
-                DAOFields.CODE.getTitle(),
-                code);
+        String query = String.format("SELECT Id, Code, FullName, Sign FROM Currencies WHERE Code = '%s'", code);
         try (Connection connection = JDBCConnectionPool.getConnection();
              Statement statement = connection.createStatement();
              ResultSet result = statement.executeQuery(query)) {
@@ -63,13 +46,7 @@ public class CurrencyDAOImpl implements CurrencyDAO {
     @Override
     public List<Currency> getAll() throws SQLException {
         List<Currency> currencies = new ArrayList<>();
-        String query = String.format(
-                "SELECT %s, %s, %s, %s FROM %s",
-                DAOFields.ID.getTitle(),
-                DAOFields.CODE.getTitle(),
-                DAOFields.FULL_NAME.getTitle(),
-                DAOFields.SIGN.getTitle(),
-                DBTables.CURRENCIES.getTitle());
+        String query = "SELECT Id, Code, FullName, Sign FROM Currencies";
         try (Connection connection = JDBCConnectionPool.getConnection();
              Statement statement = connection.createStatement();
              ResultSet result = statement.executeQuery(query)) {
