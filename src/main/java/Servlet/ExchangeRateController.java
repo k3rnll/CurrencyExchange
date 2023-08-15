@@ -1,6 +1,7 @@
 package Servlet;
 
-import DB.DBController;
+import DAO.ExchangeRateDAO;
+import DAO.ExchangeRateDAOImpl;
 import DTO.Mapper;
 import Model.ExchangeRate;
 import org.json.JSONObject;
@@ -13,7 +14,7 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.Objects;
 
-@WebServlet ({"/exchangeRate/*"})
+@WebServlet ("/exchangeRate/*")
 public class ExchangeRateController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
@@ -23,11 +24,11 @@ public class ExchangeRateController extends HttpServlet {
             response.sendError(400);
         } else {
             try {
-                DBController db = new DBController();
                 Mapper mapper = new Mapper();
-                ExchangeRate exchangeRate = db.getExchangeRate(
-                        currencyCodes.substring(0, 3),
-                        currencyCodes.substring(3));
+                ExchangeRateDAO exchangeRateDAO = new ExchangeRateDAOImpl();
+                String baseCurrencyCode = currencyCodes.substring(0, 3);
+                String targetCurrencyCode = currencyCodes.substring(3);
+                ExchangeRate exchangeRate = exchangeRateDAO.get(baseCurrencyCode, targetCurrencyCode);
                 if (Objects.nonNull(exchangeRate)) {
                     out.print(new JSONObject(mapper.toDTO(exchangeRate)));
                 } else {

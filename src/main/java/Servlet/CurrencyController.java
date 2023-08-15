@@ -1,6 +1,7 @@
 package Servlet;
 
-import DB.DBController;
+import DAO.CurrencyDAO;
+import DAO.CurrencyDAOImpl;
 import DTO.Mapper;
 import Model.Currency;
 import org.json.JSONObject;
@@ -13,7 +14,7 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.Objects;
 
-@WebServlet({"/currency/*"})
+@WebServlet("/currency/*")
 public class CurrencyController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
@@ -23,9 +24,9 @@ public class CurrencyController extends HttpServlet {
             response.sendError(400);
         } else {
             try {
-                DBController db = new DBController();
                 Mapper mapper = new Mapper();
-                Currency currency = db.getCurrency(currencyCode);
+                CurrencyDAO currencyDAO = new CurrencyDAOImpl();
+                Currency currency = currencyDAO.get(currencyCode);
                 if (Objects.nonNull(currency)) {
                     out.print(new JSONObject(mapper.toDTO(currency)));
                 } else {

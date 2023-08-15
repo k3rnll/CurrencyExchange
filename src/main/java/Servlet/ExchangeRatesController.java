@@ -1,6 +1,7 @@
 package Servlet;
 
-import DB.DBController;
+import DAO.ExchangeRateDAO;
+import DAO.ExchangeRateDAOImpl;
 import DTO.Mapper;
 import org.json.JSONObject;
 import javax.servlet.annotation.WebServlet;
@@ -12,15 +13,15 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.stream.Collectors;
 
-@WebServlet ({"/exchangeRates"})
+@WebServlet ("/exchangeRates")
 public class ExchangeRatesController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
-            DBController db = new DBController();
             Mapper mapper = new Mapper();
-            String output = db.getExchangeRatesSet()
+            ExchangeRateDAO exchangeRateDAO = new ExchangeRateDAOImpl();
+            String output = exchangeRateDAO.getAll()
                             .stream()
                             .map(mapper::toDTO)
                             .map(JSONObject::new)

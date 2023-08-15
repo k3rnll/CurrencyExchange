@@ -7,19 +7,17 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class JDBCConnectionPool {
-    InitialContext initialContext;
-    DataSource dataSource;
 
-    public JDBCConnectionPool() {
+    private JDBCConnectionPool() {}
+
+    public static Connection getConnection() throws SQLException {
         try {
-            initialContext = new InitialContext();
-            dataSource = (DataSource) initialContext.lookup("java:comp/env/jdbc/CurrencyExchange");
+            InitialContext initialContext = new InitialContext();
+            DataSource dataSource = (DataSource) initialContext.lookup("java:comp/env/jdbc/CurrencyExchange");
+            return dataSource.getConnection();
         } catch (NamingException e) {
             e.printStackTrace();
+            throw new SQLException();
         }
-    }
-
-    public Connection getConnection() throws SQLException {
-        return dataSource.getConnection();
     }
 }

@@ -1,8 +1,9 @@
 package Servlet;
 
 import DAO.CurrencyDAO;
-import DB.DBController;
+import DAO.CurrencyDAOImpl;
 import DTO.Mapper;
+import Model.Currency;
 import org.json.JSONObject;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -14,15 +15,15 @@ import java.sql.SQLException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@WebServlet({"/currencies"})
+@WebServlet("/currencies")
 public class CurrenciesController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
-            DBController db = new DBController();
+            CurrencyDAO currencyDAO = new CurrencyDAOImpl();
             Mapper mapper = new Mapper();
-            String output = db.getCurrenciesSet()
+            String output = currencyDAO.getAll()
                             .stream()
                             .map(mapper::toDTO)
                             .map(JSONObject::new)
@@ -43,14 +44,14 @@ public class CurrenciesController extends HttpServlet {
                 Objects.nonNull(request.getParameter("name")) &&
                 Objects.nonNull(request.getParameter("sign"))) {
             try {
-                DBController db = new DBController();
-                CurrencyDAO currencyDAO = new CurrencyDAO(
+                CurrencyDAO currencyDAO = new CurrencyDAOImpl();
+                Currency currency = new Currency(0,
                         request.getParameter("code"),
                         request.getParameter("name"),
                         request.getParameter("sign"));
-                db.putCurrency(currencyDAO);
                 response.setStatus(201);
-                String output = new JSONObject(db.getCurrency(currencyDAO.getCode())).toString();
+                currencyDAO.insert(currency);
+                String output = new JSONObject(currencyDAO.get(currency.getCode())).toString();
                 out.print(output);
             } catch (SQLException e) {
                 e.printStackTrace();
