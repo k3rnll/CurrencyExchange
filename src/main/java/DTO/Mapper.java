@@ -15,8 +15,8 @@ public class Mapper {
     public ExchangeRateDTO toDTO(ExchangeRate exchangeRate) {
         return new ExchangeRateDTO(
                 exchangeRate.getId().toString(),
-                toDTO(exchangeRate.getBaseCurrencyId()),
-                toDTO(exchangeRate.getTargetCurrencyId()),
+                toDTO(exchangeRate.getBaseCurrency()),
+                toDTO(exchangeRate.getTargetCurrency()),
                 exchangeRate.getRate().toString());
     }
 }

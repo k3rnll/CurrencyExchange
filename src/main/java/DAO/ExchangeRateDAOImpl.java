@@ -5,10 +5,7 @@ import DB.JDBCConnectionPool;
 import Model.Currency;
 import Model.ExchangeRate;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,7 +112,19 @@ public class ExchangeRateDAOImpl implements ExchangeRateDAO{
 
     @Override
     public Long insert(ExchangeRate exchangeRate) throws SQLException {
-        return 0L;
+        String query = String.format(
+                "INSERT INTO ExchangeRates (BaseCurrencyId, TargetCurrencyId, Rate) " +
+                        "VALUES ('%d', '%d', '%f')",
+                exchangeRate.getBaseCurrency().getId(),
+                exchangeRate.getTargetCurrency().getId(),
+                exchangeRate.getRate());
+        try (Connection connection = JDBCConnectionPool.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            statement.executeUpdate();
+            ResultSet returnedKeys = statement.getGeneratedKeys();
+            returnedKeys.next();
+            return returnedKeys.getLong(1);
+        }
     }
 
     @Override

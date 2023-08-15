@@ -17,11 +17,11 @@ public class ExchangeRate {
         return id;
     }
 
-    public Currency getBaseCurrencyId() {
+    public Currency getBaseCurrency() {
         return baseCurrency;
     }
 
-    public Currency getTargetCurrencyId() {
+    public Currency getTargetCurrency() {
         return targetCurrency;
     }
 
